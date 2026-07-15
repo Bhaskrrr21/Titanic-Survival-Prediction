@@ -1,12 +1,15 @@
 import streamlit as st
 import sys
+import subprocess
 
-st.title("Testing Environment")
+st.title("Environment Check")
 
-st.write("Python version:", sys.version)
+st.write("Python:", sys.version)
 
-try:
-    import joblib
-    st.success(f"Joblib imported successfully! Version: {joblib.__version__}")
-except Exception as e:
-    st.error(f"Error importing joblib: {e}")
+result = subprocess.run(
+    [sys.executable, "-m", "pip", "list"],
+    capture_output=True,
+    text=True,
+)
+
+st.text(result.stdout)

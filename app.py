@@ -12,7 +12,10 @@ st.set_page_config(
 
 # ---------------- Load Model ----------------
 
-model = joblib.load("Model/titanic_model.pkl")
+from pathlib import Path
+
+MODEL_PATH = Path(__file__).parent / "Model" / "titanic_model.pkl"
+model = joblib.load(MODEL_PATH)
 
 # ---------------- Sidebar ----------------
 

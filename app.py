@@ -15,7 +15,16 @@ st.set_page_config(
 from pathlib import Path
 
 MODEL_PATH = Path(__file__).parent / "Model" / "titanic_model.pkl"
-model = joblib.load(MODEL_PATH)
+
+try:
+    model = joblib.load(MODEL_PATH)
+except Exception as exc:
+    st.error(
+        "The model could not be loaded. Please install the exact packages "
+        "from requirements.txt and restart the app."
+    )
+    st.exception(exc)
+    st.stop()
 
 # ---------------- Sidebar ----------------
 
@@ -113,6 +122,9 @@ with col2:
 
 # ---------------- Create DataFrame ----------------
 
+# The trained model expects IsAlone as a feature.
+is_alone = 1 if family_size == 1 else 0
+
 input_df = pd.DataFrame({
     "Pclass": [pclass],
     "Sex": [sex],
@@ -120,16 +132,17 @@ input_df = pd.DataFrame({
     "Fare": [fare],
     "Embarked": [embarked],
     "FamilySize": [family_size],
+    "IsAlone": [is_alone],
     "Title": [title]
 })
 
 # ---------------- Prediction ----------------
 
-if st.button("🔍 Predict Survival", use_container_width=True):
+if st.button("🔍 Predict Survival", width="stretch"):
 
     st.subheader("📋 Passenger Details")
 
-    st.dataframe(input_df, use_container_width=True)
+    st.dataframe(input_df, width="stretch")
 
     prediction = model.predict(input_df)
 
